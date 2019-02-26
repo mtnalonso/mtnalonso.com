@@ -8,7 +8,7 @@
     <body>
         <header>
             <center>
-                <h1><u>Martin Alonso's Personal Site</u></h1>
+                <h1 class="no-js"><u>Martin Alonso's Personal Site</u></h1>
             </center>
         </header>
         <nav>
@@ -16,20 +16,19 @@
                 <a href="https://github.com/mtnalonso">GitHub</a> |
                 <a href="#">Security</a> |
                 <a href="#">Privacy</a> |
-                <a href="#">That's all what else did you expected?</a>
             <hr>
         </nav>
         <main>
-            <div>
-                <h3>Remove metadata from photos</h3>
-            </div>
-            <div>
-            <div>
         </main>
-        <aside>
-        </aside>
         <footer>
-            Velociraptors were not as Jurassic Park portrayed them.
         </footer>
     </body>
+    <script>
+        window.onload = function() {
+            var elementsToHide = document.querySelectorAll(".no-js");
+            for (var elementToHide of elementsToHide) {
+                elementToHide.hidden = true;
+            }
+        }
+    </script>
 </html>
