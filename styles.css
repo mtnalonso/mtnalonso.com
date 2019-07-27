@@ -8,27 +8,45 @@ nav {
     margin-bottom: 2rem;
 }
 
-* {cursor:auto !important}
+* {
+    cursor:auto !important;
+}
 
-a, a * {cursor:pointer !important}
+a, a * {
+    cursor:pointer !important;
+}
 
 
 .border-blue {
-  border-color: #006bb3 !important;
+    border-color: #006bb3 !important;
 }
 
 .border-green {
-  border-color: #4aa52e !important;
+    border-color: #4aa52e !important;
 }
 
 .border-yellow {
-  border-color: #e59400 !important;
+    border-color: #e59400 !important;
 }
 
 .border-red {
-  border-color: #ce372b !important;
+    border-color: #ce372b !important;
 }
 
 .nes-container:not(:last-child) {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.small-card-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.small-card {
+    width: max-content;
+    margin-right: 2em;
+    align-self: flex-start;
 }
