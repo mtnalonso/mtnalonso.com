@@ -47,6 +47,6 @@ a, a * {
 
 .small-card {
     width: max-content;
-    margin-right: 2em;
+    margin-right: 2em !important;
     align-self: flex-start;
 }
