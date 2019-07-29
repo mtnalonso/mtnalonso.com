@@ -1,3 +1,6 @@
 {
-    "alias": "mtnalonso.com"
+    "alias": "mtnalonso.com",
+    "routes": [
+        {"src": "/security", "dest": "/src/security.html"}
+    ]
 }
