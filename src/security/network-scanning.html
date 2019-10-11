@@ -59,15 +59,20 @@
                 </section>
                 <section class="nes-container with-title border-red">
                     <h5 class="title">ACK flag probe scan</h5>
-                    Este escaneo consiste en enviar paquetes TCP ACK y posteriormente analizar las cabeceras de la respuesta.
+                    Este escaneo consiste en enviar paquetes TCP ACK y posteriormente analizar las cabeceras de la respuesta:
                     <br><br>
-                    Suele ser empleado también para comprobar si existe algún tipo de filtrado en el objetivo:
+                    <div class="lists">
+                        <ul class="nes-list is-circle">
+                            <li>Si el valor del TTL de la respuesta RST es inferior a 64, el puerto está abierto.</li>
+                            <li>Si el valor de la ventana (WINDOW) tiene un valor distinto de cero, el puerto está abierto.</li>
+                        </ul>
+                    También suele ser empleado para comprobar si existe algún tipo de filtrado en el objetivo:
                     <br><br>
                     <div class="lists">
                         <ul class="nes-list is-circle">
                             <li>Se envía una petición TCP ACK al objetivo</li>
                             <li>Si se obtiene una respuesta, el puerto objetivo no está filtrado</li>
-                            <li>Si no se obtiene respuesta, probablemente exista algún tipo de filtrado.</li>
+                            <li>En caso contrario, probablemente exista algún tipo de filtrado.</li>
                         </ul>
                     </div>
                 </section>
