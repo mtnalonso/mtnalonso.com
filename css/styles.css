@@ -51,8 +51,28 @@ a, a * {
     align-self: flex-start;
 }
 
-.btn-expand-container {
+.nes-btn.btn-expand-container {
     position: absolute;
+    font-size: 12px;
     bottom: 0px;
     right: -4px;
+}
+
+section.exp-container > section.nes-container {
+    margin-bottom: 0px;
+}
+
+
+section.exp-container-code {
+    /*display: none;
+    top: 0px;
+    margin-top: 0px;*/
+    position: relative;
+    margin: 0;
+}
+
+section.exp-container-code > pre code {
+    font-size: 13px;
+    line-height: 1.5;
+    padding-left: 1.5rem;
 }
