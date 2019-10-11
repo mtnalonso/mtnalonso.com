@@ -77,10 +77,23 @@
                     </div>
                 </section>
                 <section class="nes-container with-title">
-                    <h5 class="title">IDLE/IPID Header Scan</h5>
+                    <h5 class="title">IDLE Scan</h5>
+                    Este tipo de escaneo involucra el uso de una tercera máquina <em>zombie</em>...
+                    <br><br>
+                    <h4 class="nes-text is-primary">Funcionamiento</h4>
+                    <div class="lists">
+                        <ul class="nes-list is-circle">
+                            <li>Se envía una paquete TCP con SYN + ACK al <em>zombie</em> para obtener su IPID.</li>
+                            <li>El <em>zombie</em> devolverá una paquete TCP RST con un IPID determinado.</li>
+                            <li>Se envía una paquete TCP SYN al objetivo con la dirección IP del <em>zombie</em>.</li>
+                            <li>Si el puerto objetivo está abierto, el objetivo envía un paquete TCP SYN+ACK al <em>zombie</em>, respondiéndole éste con un paquete RST.</li>
+                            <li>Si el puerto está cerrado, el objetivo envía un paquete RST al <em>zombie</em>.</li>
+                            <li>Se envía un paquete al <em>zombie</em> para obtener su IPID actual. Si el valor del IPID se ha incrementado 2 unidades, el puerto está abierto; si sólo ha aumentado en 1 unidad, el puerto está cerrado.</li>
+                        </ul>
+                    </div>
                 </section>
                 <section class="nes-container with-title border-blue">
-                    <h5 class="title">UDP Scanning</h5>
+                    <h5 class="title">UDP Scan</h5>
                 </section>
             </section>
             <section id="scan-tools-section" class="nes-container with-title">
