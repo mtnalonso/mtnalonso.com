@@ -2,6 +2,7 @@
     "alias": "mtnalonso.com",
     "routes": [
         {"src": "/src/security", "dest": "/src/security.html"},
+        {"src": "/src/security/network-scanning", "dest": "/src/security/network-scanning.html"},
         {"src": "/vimrc", "dest": "https://raw.githubusercontent.com/mtnalonso/vimrc/master/.vimrc"},
         {"src": "/setup", "dest": "https://raw.githubusercontent.com/mtnalonso/setup/master/setup.sh"}
     ]
