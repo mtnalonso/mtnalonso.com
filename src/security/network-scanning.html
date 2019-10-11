@@ -87,13 +87,18 @@
                             <li>El <em>zombie</em> devolverá una paquete TCP RST con un IPID determinado.</li>
                             <li>Se envía una paquete TCP SYN al objetivo con la dirección IP del <em>zombie</em>.</li>
                             <li>Si el puerto objetivo está abierto, el objetivo envía un paquete TCP SYN+ACK al <em>zombie</em>, respondiéndole éste con un paquete RST.</li>
-                            <li>Si el puerto está cerrado, el objetivo envía un paquete RST al <em>zombie</em>.</li>
-                            <li>Se envía un paquete al <em>zombie</em> para obtener su IPID actual. Si el valor del IPID se ha incrementado 2 unidades, el puerto está abierto; si sólo ha aumentado en 1 unidad, el puerto está cerrado.</li>
+                            <li>Si el puerto está cerrado, el objetivo envía un paquete RST al <em>zombie</em>.</li><br>
+                            <li>Se envía un paquete al <em>zombie</em> para obtener su IPID actual. Si el valor del IPID se ha incrementado 2 unidades, el puerto objetivo está abierto; si sólo ha aumentado en 1 unidad, el puerto está cerrado.</li>
                         </ul>
                     </div>
                 </section>
                 <section class="nes-container with-title border-blue">
                     <h5 class="title">UDP Scan</h5>
+                    Este escaneo emplea el protocolo UDP en lugar de TCP.
+                    <br><br>
+                    Si enviando un paquete UDP al objetivo, no se obtiene respuesta, el puerto puede estar abierto.<br>
+                    <br>
+                    Si enviando un paquete UDP al objetivo, éste responde con un mensaje ICMP "port unreachable", el puerto está cerrado.<br>
                 </section>
             </section>
             <section id="scan-tools-section" class="nes-container with-title">
