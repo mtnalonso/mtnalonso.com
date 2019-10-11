@@ -23,10 +23,45 @@
         </nav>
         <main>
             <h1>Escaneo de redes</h1>
-            <p>Un escaneo de redes es el proceso destinado a obtener información acerca de objetivo mediante la identificacion de equipos, puertos y servicios dentro de una red.</p>
+            <p>Un escaneo de redes es el proceso destinado a obtener información acerca del objetivo mediante la identificacion de equipos, puertos y servicios dentro de una red.</p>
+            <br>
             <section id="scan-types-section" class="nes-container with-title">
                 <h2 class="title">Tipos de escaneo</h2>
-
+                <section class="nes-container with-title">
+                    <h5 class="title">ICMP Echo Scan</h5>
+                    Consiste en enviar peticiones ICMP ECHO a un equipo determinado. Si dicho equipo está operativo, este devolverá una respuesta ICMP ECHO.
+                    <br><br>
+                    <span class="nes-text is-primary">Ping sweep</span>: Técnica para identificar los diferentes equipos dentro de una red mediante el envio de peticiones ICMP ECHO a múltiples equipos. 
+                </section>
+                <section class="nes-container with-title border-blue">
+                    <h5 class="title">TCP / Full Open Scan</h5>
+                </section>
+                <section class="nes-container with-title border-green">
+                    <h5 class="title">Stealth Scan</h5>
+                </section>
+                <section class="nes-container with-title border-yellow">
+                    <h5 class="title">XMAS Scan</h5>
+                </section>
+                <section class="nes-container with-title border-red">
+                    <h5 class="title">ACK flag probe scan</h5>
+                </section>
+                <section class="nes-container with-title">
+                    <h5 class="title">IDLE/IPID Header Scan</h5>
+                </section>
+                <section class="nes-container with-title border-blue">
+                    <h5 class="title">UDP Scanning</h5>
+                </section>
+            </section>
+            <section id="scan-tools-section" class="nes-container with-title">
+                <h2 class="title">Herramientas</h2>
+                <section class="nes-container with-title">
+                    <h5 class="title">nmap</h5>
+                    <button class="nes-btn is-primary btn-expand-container" type="button">+</button>
+                </section>
+                <section class="nes-container with-title">
+                    <h5 class="title">hping3</h5>
+                    <button class="nes-btn is-primary btn-expand-container" type="button">+</button>
+                </section>
             </section>
         </main>
     </body>
