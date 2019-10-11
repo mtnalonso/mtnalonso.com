@@ -35,15 +35,41 @@
                 </section>
                 <section class="nes-container with-title border-blue">
                     <h5 class="title">TCP / Full Open Scan</h5>
+                    Es la técnica de escaneo de puertos más fiable. Consiste en intentar establecer una conexión TCP con cada puerto del objetivo, para ello realiza un TCP 3-way handshake completo. Sin embargo este tipo de escaneo se puede detectar facilmente.
                 </section>
                 <section class="nes-container with-title border-green">
                     <h5 class="title">Stealth Scan</h5>
+                    Este escaneo fuerza la interrupción de la conexión antes de que se establezca una conexión TCP. Es más sigiloso que un escaneo TCP completo.
+                    <br><br>
+                    <h4 class="nes-text is-primary">Funcionamiento</h4>
+                    <div class="lists">
+                        <ul class="nes-list is-circle">
+                            <li>Se envía un paquete SYN al objetivo.</li>
+                            <li>Si el puerto está abierto, se obtiene una respuesta SYN/ACK.</li>
+                            <li>Si el puerto está cerrado, se obtiene una respuesta RST.</li>
+                            <li>Se envía un paquete RST al objetivo, cerrando la conexión antes de que ésta se inicie por completo.</li>
+                        </ul>
+                    </div>
                 </section>
                 <section class="nes-container with-title border-yellow">
                     <h5 class="title">XMAS Scan</h5>
+                    Este escaneo envía TCP peticiones con las flags FIN, URG y PUSH activas.<br>
+                    Si el puerto objetivo está abierto, no se obtiene respuesta.<br>
+                    Si el puerto objetivo está cerrado, se una respuesta RST.<br>
                 </section>
                 <section class="nes-container with-title border-red">
                     <h5 class="title">ACK flag probe scan</h5>
+                    Este escaneo consiste en enviar paquetes TCP ACK y posteriormente analizar las cabeceras de la respuesta.
+                    <br><br>
+                    Suele ser empleado también para comprobar si existe algún tipo de filtrado en el objetivo:
+                    <br><br>
+                    <div class="lists">
+                        <ul class="nes-list is-circle">
+                            <li>Se envía una petición TCP ACK al objetivo</li>
+                            <li>Si se obtiene una respuesta, el puerto objetivo no está filtrado</li>
+                            <li>Si no se obtiene respuesta, probablemente exista algún tipo de filtrado.</li>
+                        </ul>
+                    </div>
                 </section>
                 <section class="nes-container with-title">
                     <h5 class="title">IDLE/IPID Header Scan</h5>
