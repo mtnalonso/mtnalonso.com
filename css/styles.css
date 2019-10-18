@@ -58,15 +58,17 @@ a, a * {
     right: -4px;
 }
 
+section.exp-container {
+    margin-bottom: 1rem;
+}
+
 section.exp-container > section.nes-container {
     margin-bottom: 0px;
 }
 
 
 section.exp-container-code {
-    /*display: none;
-    top: 0px;
-    margin-top: 0px;*/
+    display: none;
     position: relative;
     margin: 0;
 }
