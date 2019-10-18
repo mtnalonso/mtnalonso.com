@@ -33,6 +33,10 @@ a, a * {
     border-color: #ce372b !important;
 }
 
+.border-gray {
+    border-color: #e4e4e4 !important;
+}
+
 .nes-container:not(:last-child) {
     margin-bottom: 1rem;
 }
