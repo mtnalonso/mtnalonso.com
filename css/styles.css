@@ -49,6 +49,10 @@ a, a * {
     align-items: flex-start;
 }
 
+.full-width-container {
+    width: 100%;
+}
+
 .small-card {
     width: max-content;
     margin-right: 2em !important;

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>mtnalonso.com</title>
+        <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/css/nes.min.css">
+        <link rel="stylesheet" type="text/css" href="/css/styles.css">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/default.min.css">
+        <script src="/js/script.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </head>
+    <body>
+        <nav>
+            <hr class="no-js">
+                <a class="nes-btn is-error" href="/"><-</a> |
+                <a class="nes-btn" href="https://github.com/mtnalonso">GitHub</a> |
+                <a class="nes-btn is-primary" href="https://www.linkedin.com/in/MartinAlonsoVilar">LinkedIn</a> |
+                <a class="nes-btn is-success" href="/security">Security</a> |
+                <a class="nes-btn is-warning" href="https://stackoverflow.com/users/5430648/martin-alonso">Stack Overflow</a> |
+                <a class="nes-btn is-disabled" href="#">Privacy</a>
+            <hr class="no-js">
+        </nav>
+        <main>
+            <h1>Open Source Intelligence</h1>
+            <p></p>
+            <br>
+            <section id="osint-tools-section" class="nes-container with-title">
+                <h2 class="title">Herramientas</h2>
+                <section class="exp-container">
+                    <section class="nes-container with-title">
+                        <h5 class="title">Recon-ng</h5>
+                        <a href="https://github.com/lanmaster53/recon-ng">Recon-ng</a>
+                        <br><br>
+                        <a href="https://github.com/lanmaster53/recon-ng/wiki/Getting-Started#installation">Instrucciones de instalación</a>
+                        <button class="nes-btn is-primary btn-expand-container" onclick="expandContainer(this)" type="button">+</button>
+                    </section>
+                    <section class="exp-container-code">
+                        <pre><code class="hljs bash">
+# Launch
+./recon-ng
+
+# Add company information and domains
+workspaces add COMPANY_NAME
+add domains companyname.com
+add companies
+                            </code></pre>
+                    </section>
+                </section>
+            </section>
+        </main>
+    </body>
+</html>
