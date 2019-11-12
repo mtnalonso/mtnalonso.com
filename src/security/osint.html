@@ -39,12 +39,25 @@
                     <section class="exp-container-code">
                         <pre><code class="hljs bash">
 # Launch
-./recon-ng
+recon-ng
 
-# Add company information and domains
+# Add company to audit
 workspaces add COMPANY_NAME
-add domains companyname.com
-add companies
+workspaces select COMPANY_NAME
+
+# Install and load modules
+marketplace refresh
+marketplace search MODULE_NAME
+marketplace install FULL/MODULE/PATH
+modules load FULL/MODULE/PATH
+
+# List and set options
+options list
+options set SOURCE mycompany.com
+
+# Start the gathering
+run
+
                             </code></pre>
                     </section>
                 </section>
