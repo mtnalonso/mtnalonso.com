@@ -7,6 +7,9 @@
         <link rel="stylesheet" type="text/css" href="/css/nes.min.css">
         <link rel="stylesheet" type="text/css" href="/css/styles.css">
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/default.min.css">
+        <script src="https://unpkg.com/i18next/i18next.js"></script>
+        <script src="https://unpkg.com/i18next-xhr-backend/i18nextXHRBackend.js"></script>
+        <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.js"></script>
         <script src="/js/script.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script>
@@ -23,11 +26,11 @@
             <hr class="no-js">
         </nav>
         <main>
-            <h1>Escaneo de redes</h1>
-            <p>Un escaneo de redes es el proceso destinado a obtener información acerca del objetivo mediante la identificacion de equipos, puertos y servicios dentro de una red.</p>
+            <h1 class="trn network-scanning-main-title">Network scanning</h1>
+            <p class="trn network-scanning-desc">Network scanning is the process through which we obtained information about the target by identifying hosts, ports and servicies from within a network.</p>
             <br>
             <section id="scan-types-section" class="nes-container with-title">
-                <h2 class="title">Tipos de escaneo</h2>
+                <h2 class="title"><span class="trn network-scanning-scan-types">Scan types</span></h2>
                 <section class="nes-container with-title">
                     <h5 class="title">ICMP Echo Scan</h5>
                     Consiste en enviar peticiones ICMP ECHO a un equipo determinado. Si dicho equipo está operativo, este devolverá una respuesta ICMP ECHO.
