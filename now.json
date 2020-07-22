@@ -1,11 +1,7 @@
 {
     "alias": "mtnalonso.com",
     "routes": [
-        {"src": "/security", "dest": "/src/security.html"},
-        {"src": "/security/network-scanning", "dest": "/src/security/network-scanning.html"},
-        {"src": "/security/osint", "dest": "/src/security/osint.html"},
-        {"src": "/security/kerberos", "dest": "/src/security/kerberos.html"},
-        {"src": "/privacy", "dest": "/src/privacy.html"},
+        {"src": "/about-me", "dest": "/src/about_me.html"},
         {"src": "/vimrc", "dest": "https://raw.githubusercontent.com/mtnalonso/vimrc/master/.vimrc"},
         {"src": "/setup", "dest": "https://raw.githubusercontent.com/mtnalonso/setup/master/setup.sh"},
         {"src": "/arch", "dest": "https://raw.githubusercontent.com/mtnalonso/arch/master/setup.sh"}
