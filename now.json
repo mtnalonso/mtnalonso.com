@@ -3,7 +3,8 @@
     "routes": [
         {"src": "/about-me", "dest": "/src/about_me.html"},
         {"src": "/blog", "dest": "/src/blog.html"},
-        {"src": "/security/web/lfi", "dest": "/src/security/lfi.html"},
+        {"src": "/security", "dest": "/src/security.html"},
+        {"src": "/security/web/lfi", "dest": "/src/security/web/lfi.html"},
         {"src": "/vimrc", "dest": "https://raw.githubusercontent.com/mtnalonso/vimrc/master/.vimrc"},
         {"src": "/setup", "dest": "https://raw.githubusercontent.com/mtnalonso/setup/master/setup.sh"},
         {"src": "/arch", "dest": "https://raw.githubusercontent.com/mtnalonso/arch/master/setup.sh"}
