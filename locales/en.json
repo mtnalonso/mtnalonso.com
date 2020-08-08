@@ -1,9 +1,0 @@
-{
-    "experience": "experience",
-    "languages": "Languages",
-    "programming": "programming",
-    "tools-title": "Tools",
-    "network-scanning-main-title": "Network scanning",
-    "network-scanning-desc": "Network scanning is the process through which we obtained information about the target by identifying hosts, ports and servicies from within a network.",
-    "network-scanning-scan-types": "Scan types"
-}
