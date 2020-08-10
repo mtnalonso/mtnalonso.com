@@ -65,6 +65,15 @@ footer {
     align-self: flex-start;
 }
 
+.post-card > a {
+    text-decoration: none !important;
+    text-decoration-color: none !important;
+    color: #212529;
+}
+.post-card > a:hover {
+    color: #212529;
+}
+
 .nes-btn.btn-expand-container {
     position: absolute;
     font-size: 12px;

