@@ -162,3 +162,13 @@ section.exp-container-code > pre code {
     margin-bottom: 1rem;
     height: 27em;
 }
+
+#wu-machine-info {
+    display: flex;
+}
+
+#wu-machine-img {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+}
