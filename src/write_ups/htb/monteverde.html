@@ -10,47 +10,9 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script>
 <style>
-    .nes-badge {
-        width: 18em;
-    }
-
-    .container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .container > h2 {
-        width: 100%;
-    }
-
-    .subsection {
-        width: 90%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin: 1em 0em 1em 0em;
-    }
-
-    .subsection > p {
-        width: 100%;
-    }
-
-    .subsection > h3 {
-        width: 100%;
-    }
-
-    .subsection > img {
-        max-width: 80%;
-        margin: 1em;
-    }
-
     #summary {
         margin: 1em 0em 2em 0em;
     }
-
 </style>
     </head>
     <body>
@@ -77,8 +39,8 @@
                     <p>Release date: January 11, 2020</p>
                     <p>IP Address: 10.10.10.172</p>
                     <br>
-                    <div class="nes-badge"><span class="is-dark">Active Directory</span></div>
-                    <div class="nes-badge"><span class="is-dark">Misconfiguration</span></div>
+                    <div class="nes-badge badge-big"><span class="is-dark">Active Directory</span></div>
+                    <div class="nes-badge badge-big"><span class="is-dark">Misconfiguration</span></div>
                     <div class="nes-badge"><span class="is-dark">SMB</span></div>
                 </div>
             </section>
@@ -101,6 +63,7 @@
                         <br>
                         <li><a href="#privesc">Privilege Escalation</a></li>
                         <ul class="nes-list is-circle">
+                            <li>Enumeration: user forms part of the "Azure admins" group</li>
                             <li>Exploit Azure ADConnect and get the Administrator's password</li>
                             <li>Get reverse shell as administrator with its password</li>
                         </ul>
@@ -155,10 +118,7 @@ do
     done &lt; "$wordlist_file"
 done &lt; "$username_file"
                     </code></pre>
-                    <p>(Later on I discovered that this was not necessary at all since this can be done directly with <b>CrackMapExec</b>)</p>
-                    <!-- https://0xdf.gitlab.io/2020/06/13/htb-monteverde.html -->
-                    <p style="background-color:cyan">Pop up here</p>
-                    <br>
+                    <p>(Later on I discovered that this was not necessary at all since this can be done directly with <a href="https://github.com/byt3bl33d3r/CrackMapExec/wiki/Using-Credentials#brute-forcing--password-spraying">CrackMapExec</a>)</p>
                     <p>Running the script it appeared that by using the credentials <b class="nes-text is-primary">SABatchJobs</b>:<b class="nes-text is-primary">SABatchJobs</b> I can list some shares:</p>
                     <img src="/img/htb/monteverde/list-shares.png">
                     <p>Testing the same credentials with CrackMapExec it seems those are valid credentials on the system.</p>
@@ -233,14 +193,12 @@ evil-winrm -i 10.10.10.172 -u administrator -p 'd0m@in4dminyeah!'
                 </section>
             </section>
         </main>
-        <!--
-        <footer>
+        <div>
             <a href="mailto:mtnalonso@pm.me"><i class="nes-icon gmail is-small"></i></a>
             <a href="https://github.com/mtnalonso"><i class="nes-icon github is-small"></i></a>
             <a href="https://twitter.com/mtnalonso"><i class="nes-icon twitter is-small"></i></a>
             <a href="https://www.linkedin.com/in/MartinAlonsoVilar"><i class="nes-icon linkedin is-small"></i></a>
             <b>Style: <a href="https://nostalgic-css.github.io/NES.css/">NES.css</a></b>
-        </footer>
-        -->
+        </div>
     </body>
 </html>

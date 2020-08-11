@@ -89,6 +89,21 @@ footer {
     right: -4px;
 }
 
+.nes-badge.badge-big {
+    width: 18em;
+}
+
+section.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+section.container > h2 {
+    width: 100%;
+}
+
 section.exp-container {
     margin-bottom: 1rem;
 }
@@ -109,3 +124,26 @@ section.exp-container-code > pre code {
     line-height: 1.5;
     padding-left: 1.5rem;
 }
+
+.subsection {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 1em 0em 1em 0em;
+}
+
+.subsection > p {
+    width: 100%;
+}
+
+.subsection > h3 {
+    width: 100%;
+}
+
+.subsection > img {
+    max-width: 80%;
+    margin: 1em;
+}
+
