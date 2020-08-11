@@ -172,3 +172,7 @@ section.exp-container-code > pre code {
     display: flex;
     justify-content: center;
 }
+
+#wu-machine-info-box {
+    width: 50%;
+}
