@@ -152,6 +152,10 @@ section.exp-container-code > pre code {
     justify-content: space-between;
 }
 
+#home-latests-posts {
+    width: 68%;
+    min-height: 30em;
+}
 
 #home-side-menu {
     width: 28%;
