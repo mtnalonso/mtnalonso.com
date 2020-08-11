@@ -147,3 +147,8 @@ section.exp-container-code > pre code {
     margin: 1em;
 }
 
+#home-main {
+    display: flex;
+    justify-content: space-between;
+}
+
