@@ -168,11 +168,49 @@ section.exp-container-code > pre code {
 }
 
 #wu-machine-img {
-    width: 50%;
+    width: 35%;
     display: flex;
     justify-content: center;
 }
 
 #wu-machine-info-box {
-    width: 50%;
+    width: 60%;
 }
+
+
+/* Smartphone */
+@media screen and (max-device-width: 480px) {
+    #wu-machine-info {
+        flex-flow: column wrap;
+        justify-content: center;
+    }
+
+    #wu-machine-img {
+        width: 100%;
+        margin-bottom: 2em;
+        margin-top: 1em;
+    }
+
+    #wu-machine-info-box {
+        width: 100%;
+    }
+}
+
+/* Tablet Portrait */
+@media screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait) {
+    #wu-machine-info {
+        flex-flow: column wrap;
+        justify-content: center;
+    }
+
+    #wu-machine-img {
+        width: 100%;
+        margin-bottom: 2em;
+        margin-top: 1em;
+    }
+
+    #wu-machine-info-box {
+        width: 100%;
+    }
+}
+
