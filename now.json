@@ -9,6 +9,7 @@
         {"src": "/write-ups/hackthebox/monteverde", "dest": "/src/write_ups/htb/monteverde.html"},
         {"src": "/vimrc", "dest": "https://raw.githubusercontent.com/mtnalonso/vimrc/master/.vimrc"},
         {"src": "/setup", "dest": "https://raw.githubusercontent.com/mtnalonso/setup/master/setup.sh"},
-        {"src": "/arch", "dest": "https://raw.githubusercontent.com/mtnalonso/arch/master/setup.sh"}
+        {"src": "/arch", "dest": "https://raw.githubusercontent.com/mtnalonso/arch/master/setup.sh"},
+        {"src": "/blog/2020/07/23-hello-friend", "dest": "/src/blog/2020/07/23-hello-friend.html"}
     ]
 }
