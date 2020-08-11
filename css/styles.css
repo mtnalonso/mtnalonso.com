@@ -180,6 +180,23 @@ section.exp-container-code > pre code {
 
 /* Smartphone */
 @media screen and (max-device-width: 480px) {
+    #home-main {
+        display: flex;
+        flex-flow: column wrap;
+    }
+    
+    #home-latests-posts {
+        width: 100%;
+        min-height: 30em;
+    }
+    
+    #home-side-menu {
+        width: 50%;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        height: 27em;
+    }
+
     #wu-machine-info {
         flex-flow: column wrap;
         justify-content: center;
@@ -198,6 +215,23 @@ section.exp-container-code > pre code {
 
 /* Tablet Portrait */
 @media screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait) {
+    #home-main {
+        display: flex;
+        flex-flow: column wrap;
+    }
+    
+    #home-latests-posts {
+        width: 100%;
+        min-height: 30em;
+    }
+    
+    #home-side-menu {
+        width: 50%;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        height: 27em;
+    }
+
     #wu-machine-info {
         flex-flow: column wrap;
         justify-content: center;
