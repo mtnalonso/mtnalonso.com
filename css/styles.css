@@ -81,6 +81,7 @@ footer.fixed {
     text-decoration-color: none !important;
     color: #212529;
 }
+
 .post-card > a:hover {
     color: #212529;
 }
@@ -94,6 +95,11 @@ footer.fixed {
 
 .nes-badge.badge-big {
     width: 18em;
+}
+
+.plain-link {
+    text-decoration: none !important;
+    color: black;
 }
 
 section.container {
