@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>mtnalonso.com - Cheatsheets</title>
+        <link rel="stylesheet" type="text/css" href="/css/nes.min.css">
+        <link rel="stylesheet" type="text/css" href="/css/styles.css">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/default.min.css">
+        <script src="/js/script.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </head>
+    <body>
+        <nav>
+            <hr>
+            <a class="nes-btn is-error" href="/"><-</a> |
+            <a class="nes-btn is-primary" href="/blog">BLOG</a> |
+            <a class="nes-btn is-success" href="/security">SECURITY</a> |
+            <a class="nes-btn is-warning" href="/about-me">ABOUT ME</a> |
+            <a class="nes-btn" href="/write-ups">WRITE-UPS</a>
+            <hr>
+        </nav>
+        <main>  
+            <h1>Cheatsheets</h1>
+            <br>
+            <section id="tools" class="nes-container with-title">
+                <h2 class="title">Tools</h2>
+                <section class="exp-container">
+                    <section class="nes-container with-title">
+                        <h5 class="title">nmap</h5>
+                        <button class="nes-btn is-primary btn-expand-container" onclick="expandContainer(this)">+</button>
+                    </section>
+                    <section class="exp-container-code">
+                        <pre><code class="hljs bash">
+# ICMP (Ping) scan
+nmap -sP &lt;target-ip-address&gt;
+
+# Ping sweep
+nmap -sP 192.168.0.1-255
+
+# TCP scan
+nmap -sT &lt;target-ip-address&gt;
+
+# Stealth (SYN) scan
+nmap -sS &lt;target-ip-address&gt;
+
+# XMAS scan
+nmap -sX &lt;target-ip-address&gt;
+
+# ACK scan
+nmap -sA &lt;target-ip-address&gt;
+
+# WINDOW scan
+nmap -sW &lt;target-ip-address&gt;
+
+# UDP scan
+nmap -sU &lt;target-ip-address&gt;
+                        </code></pre>
+                    </section>
+                </section>
+            <section>
+        </main>
+        <footer>
+            <a href="mailto:mtnalonso@pm.me"><i class="nes-icon gmail is-small"></i></a>
+            <a href="https://github.com/mtnalonso"><i class="nes-icon github is-small"></i></a>
+            <a href="https://twitter.com/mtnalonso"><i class="nes-icon twitter is-small"></i></a>
+            <a href="https://www.linkedin.com/in/MartinAlonsoVilar"><i class="nes-icon linkedin is-small"></i></a>
+            <b>Style: <a href="https://nostalgic-css.github.io/NES.css/">NES.css</a></b>
+        </footer>
+    </body>
+</html>
