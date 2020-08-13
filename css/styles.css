@@ -183,6 +183,10 @@ section.exp-container-code > pre code {
 
 /* Smartphone */
 @media screen and (max-device-width: 480px) {
+    body {
+        font-size: 16px;
+    }
+    
     #home-main {
         display: flex;
         flex-flow: column wrap;
