@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>HTB Traceback</title>
+        <link rel="stylesheet" type="text/css" href="/css/nes.min.css">
+        <link rel="stylesheet" type="text/css" href="/css/styles.css">
+        <link rel="stylesheet" type="text/css" href="/css/highlight.min.css">
+        <script src="/js/script.js"></script>
+        <script src="/js/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+<style>
+    #summary {
+        margin: 1em 0em 2em 0em;
+    }
+</style>
+    </head>
+    <body>
+        <nav>
+            <hr>
+            <a class="nes-btn is-error" href="/"><-</a> |
+            <a class="nes-btn is-primary" href="/blog">BLOG</a> |
+            <a class="nes-btn is-success" href="/security">SECURITY</a> |
+            <a class="nes-btn is-warning" href="/about-me">ABOUT ME</a> |
+            <a class="nes-btn" href="/write-ups">WRITE-UPS</a>
+            <hr>
+        </nav>
+        <main>  
+            <h1>Hack The Box - Traceback</h1>
+            <br>
+            <section id="wu-machine-info">
+                <div id="wu-machine-img">
+                    <img src="/img/htb/traceback/traceback.png">
+                </div>
+                <div id="wu-machine-info-box" class="nes-container is-rounded with-title">
+                    <h2 class="title">Machine info</h2>
+                    <div>
+                        <p>Operating System: Linux</p>
+                        <p>Difficulty: <span class="nes-text is-success">Easy</span></p>
+                        <p>Release date: March 15, 2020</p>
+                        <p>IP Address: 10.10.10.181</p>
+                    </div>
+                    <br>
+                    <div class="nes-badge"><span class="is-dark">Web</span></div>
+                    <div class="nes-badge badge-big"><span class="is-dark">Process Inspection</span></div>
+                    <div class="nes-badge badge-big"><span class="is-dark">Arbitrary Upload</span></div>
+                </div>
+            </section>
+            <br>
+            <section id="summary">
+                <h2><a href="#summary">#</a> Summary</h2>
+                <div class="lists">
+                    <ul class="nes-list is-disc">
+                        <li><a href="#recon">Recon</a></li>
+                        <ul class="nes-list is-circle">
+                            <li>Port scanning</li>
+                            <li>Web application analysis: discovered backdoor smevk.php</li>
+                        </ul>
+                        <br>
+                        <li><a href="#machine-access">Machine Access</a></li>
+                        <ul class="nes-list is-circle">
+                            <li>Use backdoor to get reverse shell as the user <b>webadmin</b></li>
+                            <li>Exploit local tool to gain access as the user <b>sysadmin</b></li>
+                        </ul>
+                        <br>
+                        <li><a href="#privesc">Privilege Escalation</a></li>
+                        <ul class="nes-list is-circle">
+                            <li class="TODO">TODO</li>
+                        </ul>
+                    </ul>
+                </div>
+            </section>
+            <section id="recon" class="container">
+                <h2><a href="#recon">1.</a> Recon</h2>
+                <section id="port-scan" class="subsection">
+                    <h3><a href="#port-scan">1.1.</a> Port Scan</h3>
+                    <p>I started out with a fast nmap scan that showed only the following open ports:</p>
+                    <pre><code class="hljs bash">
+nmap -p- -T5 --min-rate 5000 -n -v -oA nmap/fast-scan 10.10.10.181
+                    </code></pre>
+                    <img src="/img/htb/traceback/fast-scan.png">
+                </section>
+                <section id="web-analysis" class="subsection">
+                    <h3><a href="#web-analysis">1.2.</a> Web Analysis</h3>
+                    <p>As the machine had a web browser running I decided to first examine the HTTP headers of the server. In this case it was an Apache server version 2.4.29 running on an Ubuntu machine.</p>
+                    <img src="/img/htb/traceback/http-headers.png">
+                    <p>After searching the Apache version across different <a href="https://packages.ubuntu.com/search?keywords=apache2">Ubuntu packages</a>, it seemed that the Ubuntu version the machine was running was 18.04 LTS (Bionic Beaver).</p>
+                    <p>Browsing the web application it only showed a compromised view stating that a backdor had been left in the application or machine.</p>
+                    <img src="/img/htb/traceback/browse-web.png">
+                    <p>Analyzing the source code of the application it didn’t contain much logic appart from a CSS animation to change the background color. I run whatweb in order to get an insight into the workings of the target web application but it didn't provide much information:</p>
+                    <pre><code class="hljs bash">
+whatweb http://10.10.10.181
+                    </pre></code>
+                    <img src="/img/htb/traceback/whatweb.png">
+                    <p>Therefore I launched gobuster with a common wordlist looking for some routes on the web applicaction, but it happened to be practically useless.</p>
+                    <pre><code class="hljs bash">
+gobuster dir -u http://10.10.10.181/ -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,301,302,307,403,500' -e
+                    </pre></code>
+                    <img src="/img/htb/traceback/url-bruteforce-common.png">
+                    <p>As the defaced web was mentioning a backdoor I decided to check for common backdoors. Luckily I got a match on the first wordlist I tried:</p>
+                    <pre><code class="hljs bash">
+gobuster dir -u http://10.10.10.181 -w Desktop/Useful\ Repos/SecLists/Discovery/Web-Content/CommonBackdoors-PHP.fuzz.txt -s '200,301,302,307,403,500' -e
+                    </pre></code>
+                    <img src="/img/htb/traceback/url-bruteforce-backdoors.png">
+                </section>
+            </section>
+            <section id="machine-access" class="container">
+                <h2><a href="#machine-access">2.</a> Machine Access</h2>
+            </section>
+            <section id="privesc" class="container">
+                <h2><a href="#privesc">3.</a> Privilege Escalation</h2>
+                </section>
+            </section>
+        </main>
+        <footer>
+            <a href="mailto:mtnalonso@pm.me"><i class="nes-icon gmail is-small"></i></a>
+            <a href="https://github.com/mtnalonso"><i class="nes-icon github is-small"></i></a>
+            <a href="https://twitter.com/mtnalonso"><i class="nes-icon twitter is-small"></i></a>
+            <a href="https://www.linkedin.com/in/MartinAlonsoVilar"><i class="nes-icon linkedin is-small"></i></a>
+            <b>Style: <a href="https://nostalgic-css.github.io/NES.css/">NES.css</a></b>
+        </footer>
+    </body>
+</html>

@@ -12,6 +12,7 @@
         {"src": "/arch", "dest": "https://raw.githubusercontent.com/mtnalonso/arch/master/setup.sh"},
         {"src": "/security/web/lfi", "dest": "/src/security/web/lfi.html"},
         {"src": "/write-ups/hackthebox/monteverde", "dest": "/src/write_ups/htb/monteverde.html"},
+        {"src": "/write-ups/hackthebox/traceback", "dest": "/src/write_ups/htb/traceback.html"},
         {"src": "/blog/2020/07/23-hello-friend", "dest": "/src/blog/2020/07/23-hello-friend.html"}
     ]
 }

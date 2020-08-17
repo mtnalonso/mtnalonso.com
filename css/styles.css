@@ -102,6 +102,10 @@ footer.fixed {
     color: black;
 }
 
+.TODO {
+    background-color: coral;
+}
+
 section.container {
     display: flex;
     flex-direction: column;
@@ -154,6 +158,10 @@ section.exp-container-code > pre code {
 .subsection > img {
     max-width: 80%;
     margin: 1em;
+}
+
+.subsection > pre {
+    width: 100%;
 }
 
 #home-main {
