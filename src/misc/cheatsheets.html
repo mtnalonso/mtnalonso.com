@@ -57,6 +57,9 @@ nmap -sW &lt;target-ip-address&gt;
 
 # UDP scan
 nmap -sU &lt;target-ip-address&gt;
+
+# Fast scan across all ports
+nmap -p- -T5 --min-rate 5000 -n -v &lt;target-ip-address&gt;
                         </code></pre>
                     </section>
                 </section>
