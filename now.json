@@ -12,6 +12,7 @@
         {"src": "/arch", "dest": "https://raw.githubusercontent.com/mtnalonso/arch/master/setup.sh"},
         {"src": "/security/web/lfi", "dest": "/src/security/web/lfi.html"},
         {"src": "/security/pentesting/smb", "dest": "/src/security/pentesting/services/smb.html"},
+        {"src": "/security/web/url-fuzzing", "dest": "/src/security/web/url_fuzzing.html"},
         {"src": "/write-ups/hackthebox/monteverde", "dest": "/src/write_ups/htb/monteverde.html"},
         {"src": "/blog/2020/07/23-hello-friend", "dest": "/src/blog/2020/07/23-hello-friend.html"}
     ]

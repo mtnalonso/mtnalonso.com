@@ -57,10 +57,53 @@ nmap -sW &lt;target-ip-address&gt;
 
 # UDP scan
 nmap -sU &lt;target-ip-address&gt;
+
+# Fast scan across all ports
+nmap -p- -T5 --min-rate 5000 -n -v &lt;target-ip-address&gt;
                         </code></pre>
                     </section>
                 </section>
-            <section>
+            </section>
+            <section id="linux" class="nes-container with-title border-red">
+                <h2 class="title">Linux</h2>
+                <section class="exp-container">
+                    <section class="nes-container with-title">
+                        <h5 class="title">Users</h5>
+                        <button class="nes-btn is-primary btn-expand-container" onclick="expandContainer(this)">+</button>
+                    </section>
+                    <section class="exp-container-code" style="display: none;">
+                        <pre><code class="hljs bash">
+## Password Updates
+# Force password update on next login
+chage -d 0 &lt;username&gt;
+# List user current settings
+chage -l &lt;username&gt;
+# Expire an account on specific day
+chage -E YYYY-MM-DD &lt;username&gt;
+# Get date after x days: $(date -d "+45 days")
+
+# /etc/shadow format:
+#     loginname:password:lastchange:minage:maxage:warning:inactive:expire:blank
+
+# Lock account
+usermod -L &lt;username&gt;
+# Lock and expire account
+usermod -L -e 1 &lt;username&gt;
+
+
+## Groups
+# Remove user from group
+gpasswd -d &lt;username&gt; &lt;group&gt;
+
+
+## ACLs
+setfacl -m u:&lt;user&gt;:rwx &lt;file&gt;
+setfacl -R -m u:&lt;user&gt;:rwX &lt;directory&gt;
+setfacl -d -R -m u:&lt;user&gt;:rwX &lt;directory&gt; # directory with default values
+                        </code></pre>
+                    </section>
+                </section>
+            </section>
         </main>
         <footer>
             <a href="mailto:mtnalonso@pm.me"><i class="nes-icon gmail is-small"></i></a>
