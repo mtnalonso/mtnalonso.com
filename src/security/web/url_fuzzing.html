@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>URL Fuzzing</title>
+        <link rel="stylesheet" type="text/css" href="/css/nes.min.css">
+        <link rel="stylesheet" type="text/css" href="/css/styles.css">
+        <link rel="stylesheet" type="text/css" href="/css/highlight.min.css">
+        <script src="/js/script.js"></script>
+        <script src="/js/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </head>
+    <body>
+        <nav>
+            <hr>
+            <a class="nes-btn is-error" href="/"><-</a> |
+            <a class="nes-btn is-primary" href="/blog">BLOG</a> |
+            <a class="nes-btn is-success" href="/security">SECURITY</a> |
+            <a class="nes-btn is-warning" href="/about-me">ABOUT ME</a> |
+            <a class="nes-btn" href="/write-ups">WRITE-UPS</a>
+            <hr>
+        </nav>
+        <main>  
+            <h1>URL Fuzzing</h1>
+            <br>
+            <section id="tools">
+                <section class="nes-container with-title">
+                    <h2 class="title">gobuster</h2>
+                    <pre><code class="hljs bash">
+gobuster dir -u http://example.com/ -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,301,302,307,403,500' -e
+                    </code></pre>
+                </section>
+                <br>
+                <section class="nes-container with-title">
+                    <h2 class="title">wfuzz</h2>
+                    <pre><code class="hljs bash">
+wfuzz -c -w /usr/share/wordlists/dirb/big.txt --hc=403,404 -u "http://example.com/FUZZ.php" -t 100
+                    </code></pre>
+                    <b class="nes-text is-primary">Virtual hosts fuzzing:</b>
+                    <pre><code class="hljs bash">
+# Might be interesting to generate a wordlist from the target with cewl
+cewl -d 3 -w words.txt http://example.com
+
+wfuzz -H "HOST: FUZZ.com" -w words.txt -u "http://example.com" --hc 403,404
+                    </code></pre>
+                </section>
+                <br>
+                <section class="nes-container with-title">
+                    <h2 class="title">dirsearch</h2>
+                    <pre><code class="hljs bash">
+python3 dirsearch.py -e php -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt -f -t 20 -u http://example.com
+                    </code></pre>
+                </section>
+            </section>
+            <br>
+        </main>
+        <footer>
+            <a href="mailto:mtnalonso@pm.me"><i class="nes-icon gmail is-small"></i></a>
+            <a href="https://github.com/mtnalonso"><i class="nes-icon github is-small"></i></a>
+            <a href="https://twitter.com/mtnalonso"><i class="nes-icon twitter is-small"></i></a>
+            <a href="https://www.linkedin.com/in/MartinAlonsoVilar"><i class="nes-icon linkedin is-small"></i></a>
+            <b>Style: <a href="https://nostalgic-css.github.io/NES.css/">NES.css</a></b>
+        </footer>
+    </body>
+</html>
