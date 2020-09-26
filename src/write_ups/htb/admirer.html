@@ -184,14 +184,27 @@ FIELDS TERMINATED BY "\n"
                 <h2><a href="#privesc">3.</a> Privilege Escalation</h2>
                 <section id="user-privs" class="subsection">
                     <h3><a href="#user-privs">3.1.</a> Enumerate user privileges</h3>
+                    <p>Once I was in the target machine as waldo, while doing the usual enumeration tasks (OS version, permissions, etc.) it seemed waldo could run an admin script passing its own environment to it.</p>
+                    <p>Interesting enough, checking the cronjobs configuration, there was a cronjob configured to delete any Python related files on the home folder.</p>
                     <img src="/img/htb/admirer/sudo-user.png">
+                    <p>This admin script in Bash had an option to make a backup of the web directory. In this case, this action was performed invoking an external Python script, instead of performing the backup from the Bash script.</p>
                     <img src="/img/htb/admirer/backup-web.png">
+                    <p>The Python backup script was a very simple script as it is shown in the following image. This script imports the <code>shutil</code> library in order to use its <code>make_archive</code> function to do the backup of the folder:</p>
                     <img src="/img/htb/admirer/backup-script.png">
+                    <p>Knowing that the current sudo configuration for waldo uses the user environment, it was possible to modify the Python environment with a new one replacing the location where the <b>shutil</b> library was going to get loaded for a malicious one.</p>
                 </section>
                 <section id="exploit-path" class="subsection">
                     <h3><a href="#exploit-path">3.2.</a> Exploit Python path</h3>
-
+                    <p>In order to perform the exploit, first of all I created a <b>shutil.py</b> file with the function <code>make_archive</code> in it.</p>
+                    <p>I decided to try first with a ping call to my machine as I was getting some trouble getting the <code>PYTHONPATH</code> environment passed to the root process. It appeared that the sudo option <b>-E</b> does not work with <code>PATH</code> nor <code>PYTHONPATH</code> and, if required, those variables have to be explicitly passed when calling the command (<a href="https://stackoverflow.com/questions/8633461/how-to-keep-environment-variables-when-using-sudo">stackoverflow</a>).</p>
+                    <p>After passing the <code>PYTHONPATH</code> variable as indicated in the following picture, I started getting the output from the ping command.</p>
+                    <pre style="width:100%"><code class="hljs sql">
+sudo PYTHONPATH=/home/waldo/scripts /opt/scripts/admin_tasks.sh 6
+                    </code></pre>
+                    <img src="/img/htb/admirer/ping-test.png">
+                    <p>Finally, I modified the <code>make_archive</code> function with a reverse shell and opened a netcat listener on my machine.</p>
                     <img src="/img/htb/admirer/reverse-shell-script.png">
+                    <p>Firing again the admin script with sudo I got a reverse shell as root!</p>
                     <img src="/img/htb/admirer/reverse-shell-root.png">
                 </section>
             </section>
