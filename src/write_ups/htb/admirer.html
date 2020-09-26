@@ -83,27 +83,31 @@
 nmap -p- -T5 --min-rate 5000 --open -v -n -Pn -oA nmap/fast-scan 10.10.10.187
                     </code></pre>
                     <img src="/img/htb/admirer/fast-scan.png">
-                    <p>It didn't show much services but keeping in mind that this was an easy machine, I went directly to examine the web application after running the nmap custom scripts and version checks on those ports (which results didn't provide that much info).</p>
+                    <p>It didn't show a lot of services but keeping in mind that this was an easy machine, I went directly to examine the web application after running the nmap custom scripts and version checks on those ports (which results didn't provide that much info either).</p>
                 </section>
                 <section id="web-enum" class="subsection">
                     <h3><a href="#web-enum">1.2.</a> Web Enumeration</h3>
-                    <p>First of all, I checked the HTTP Headers with curl but there were no interesting headers.</p>
+                    <p>First of all, I checked the HTTP Headers with curl but there were no interesting headers. So I just fired up a proxy (just in case) and opened the web on my browser.</p>
                     <img src="/img/htb/admirer/web-browse.png">
-                    <p>Taking a quick look at the <b>robots.txt</b> file it shown a juicy directory that was worth investigating:</p>
+                    <p>Taking a quick glance at the <b>robots.txt</b> file it shown a juicy directory that was worth investigating:</p>
                     <img src="/img/htb/admirer/robots-txt.png">
-                    <p>Doing some brute-force URL enumeration with gobuster using a common wordlist I found a couple of files that worth a look.</p>
+                    <p>After doing some brute-force URL enumeration with gobuster using a common wordlist I found a couple of files that worth a look.</p>
                     <pre style="width:100%"><code class="hljs bash">
 gobuster dir -u http://10.10.10.187/admin-dir -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,301,302,307,403,500' -e
                     </code></pre>
                     <img src="/img/htb/admirer/gobuster-admin-dir.png">
+                    <p>The <b>credentials.txt</b> file (the one I jumped directly into it) contained some credentials for FTP, internal mail and Wordpress.</p>
                     <img src="/img/htb/admirer/credentials.png">
+                    <p>The <b>contacts.txt</b> file it only contained some emails from presumably employess of the company behind the web page as well as their current(?) position.</p>
                     <img src="/img/htb/admirer/contacts.png">
+                    <p>As both files contained valuable information I decided to grab a quick copy of them with wget before trying to test some of those credentials.</b>
                 </section>
                 <section id="ftp-enum" class="subsection">
                     <h3><a href="#ftp-enum">1.3.</a> FTP Enumeration</h3>
-                    <p>Trying the gathered FTP credentials from the <b>credentials.txt</b> file (<code>ftpuser</code> : <code>%n?4Wz}R$tTF7</code>) I was able to access the FTP server.</p>
+                    <p>Testing the gathered FTP credentials from the <b>credentials.txt</b> file (<code>ftpuser</code> : <code>%n?4Wz}R$tTF7</code>) I was able to access the FTP server.</p>
                     <img src="/img/htb/admirer/ftp-enum.png">
                     <p>There, I was able to retrieve a database dump and the compressed files of the web application.</p>
+                    <p>Checking really quick the database dump file I found it only had information of the web application images / items.</p>
                 </section>
                 <section id="web-enum-2" class="subsection">
                     <h3><a href="#web-enum-2">1.4.</a> Web Enumeration (2)</h3>
@@ -112,22 +116,23 @@ gobuster dir -u http://10.10.10.187/admin-dir -w /usr/share/seclists/Discovery/W
                     <p>However, after taking a look at the <b>index.php</b>, I realized that the file contained a syntax error (the database password contains double quotes, breaking its own string format):</p>
                     <img src="/img/htb/admirer/syntax-error.png">
                     <p>As the web application is currently up and running, that might indicate that the found files were actually a backup of the web application.</p>
-                    <p>Going back to the utility scripts, I decided to enumerate further on that directory. This took quite some time but after using some big wordlists I was able to find an interesting route.</p>
+                    <p>Going back to the utility scripts, I decided to enumerate further on that directory. This took quite some time but after using some big wordlists I was able to find an interesting route. In the meantime I grabbed a copy and took note of any useful information (i.e. the web application folder).</p>
                     <pre style="width:100%"><code class="hljs bash">
 wfuzz -c -w /usr/share/wordlists/dirb/big.txt --hc=403,404 -u "http://10.10.10.187/utility-scripts/FUZZ.php" -t 100
                     </code></pre>
                     <img src="/img/htb/admirer/wfuzz.png">
-                    <p>This new finding was the <a href="https://www.adminer.org/">Adminer</a> application, a database management application written in a single PHP file.</p>
+                    <p>This new finding was an <a href="https://www.adminer.org/">Adminer</a> instance, a database management application written in a single PHP file.</p>
                     <img src="/img/htb/admirer/adminer-login.png">
-                    <p>My first guess here was to use the database credentials from the downloaded <b>index.php</b> but without success.</p>
+                    <p>My first guess here was to use the database credentials from the downloaded <b>index.php</b> to log into the app but it didn't work.</p>
                 </section>
             </section>
             <section id="machine-access" class="container">
                 <h2><a href="#machine-access">2.</a> Machine Access</h2>
                 <section id="lfi-vuln" class="subsection">
                     <h3><a href="#lfi-vuln">2.1</a> LFI vulnerability</h3>
-                    <p>Doing a little bit of research about the application and its version (as it was shown in its login page), </p>
-                    <h5>VULNERABILITY SOURCES???</h5>
+                    <p>Doing a little bit of research about the application and its version (as it was shown in its login page), I found out that Adminer ver. 4.6.2 is presents a Local File Inclusion vulnerability.</p>
+                    <p>This specific version of Adminer allows an attacker to connect to a database on its own machine from the Adminer application. However, as Adminer is running on the victim machine, it is possible to load the content of a file from the victim system.</p>
+                    <p>This vulnerability and its exploit are further explained in <a href="https://www.foregenix.com/blog/serious-vulnerability-discovered-in-adminer-tool">this article</a> by Foregenix as well on <a href="https://medium.com/bugbountywriteup/adminer-script-results-to-pwning-server-private-bug-bounty-program-fe6d8a43fe6f">this Medium post</a> by <a href="https://twitter.com/YShahinzadeh?">@YShahinzadeh</a>.</p>
                 </section>
                 <section id="setup-machine" class="subsection">
                     <h3><a href="#setup-machine">2.2</a> Setup local machine</h3>
