@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>HTB Admirer</title>
+        <link rel="stylesheet" type="text/css" href="/css/nes.min.css">
+        <link rel="stylesheet" type="text/css" href="/css/styles.css">
+        <link rel="stylesheet" type="text/css" href="/css/highlight.min.css">
+        <script src="/js/script.js"></script>
+        <script src="/js/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+<style>
+    #summary {
+        margin: 1em 0em 2em 0em;
+    }
+</style>
+    </head>
+    <body>
+        <nav>
+            <hr>
+            <a class="nes-btn is-error" href="/"><-</a> |
+            <a class="nes-btn is-primary" href="/blog">BLOG</a> |
+            <a class="nes-btn is-success" href="/security">SECURITY</a> |
+            <a class="nes-btn is-warning" href="/about-me">ABOUT ME</a> |
+            <a class="nes-btn" href="/write-ups">WRITE-UPS</a>
+            <hr>
+        </nav>
+        <main>  
+            <h1>Hack The Box - Admirer</h1>
+            <br>
+            <section id="wu-machine-info">
+                <div id="wu-machine-img">
+                    <img src="/img/htb/admirer/admirer.png">
+                </div>
+                <div id="wu-machine-info-box" class="nes-container is-rounded with-title">
+                    <h2 class="title">Machine info</h2>
+                    <div>
+                        <p>Operating System: Linux</p>
+                        <p>Difficulty: <span class="nes-text is-success">Easy</span></p>
+                        <p>Release date: May 12, 2020</p>
+                        <p>IP Address: 10.10.10.187</p>
+                    </div>
+                    <br>
+                    <div class="nes-badge badge-big"><span class="is-dark">Misconfiguration</span></div>
+                    <div class="nes-badge"><span class="is-dark">Web</span></div>
+                    <div class="nes-badge"><span class="is-dark">SQL</span></div>
+                    <div class="nes-badge"><span class="is-dark">Python</span></div>
+                </div>
+            </section>
+            <br>
+            <section id="summary">
+                <h2><a href="#summary">#</a> Summary</h2>
+                <div class="lists">
+                    <ul class="nes-list is-disc">
+                        <li><a href="#recon">Recon</a></li>
+                        <ul class="nes-list is-circle">
+                            <li>Port scanning</li>
+                            <li>Web enumeration: found contacts and credentials</li>
+                            <li>FTP: get web source code backup with known credentials</li>
+                            <li>Web enumeration (after source code): found Adminer application</li>
+                        </ul>
+                        <br>
+                        <li><a href="#machine-access">Machine Access</a></li>
+                        <ul class="nes-list is-circle">
+                            <li>Exploit LFI vulnerability in Adminer</li>
+                            <li>Log to the server via SSH</li>
+                        </ul>
+                        <br>
+                        <li><a href="#privesc">Privilege Escalation</a></li>
+                        <ul class="nes-list is-circle">
+                            <li>Enumerate user privileges: able to run certain scripts as root</li>
+                            <li>Exploit Python environment to run code as root</li>
+                        </ul>
+                    </ul>
+                </div>
+            </section>
+            <section id="recon" class="container">
+                <h2><a href="#recon">1.</a> Recon</h2>
+                <section id="port-scan" class="subsection">
+                    <h3><a href="#port-scan">1.1.</a> Port Scan</h3>
+                    <p>As usual, I started scanning the open ports in the box by doing a fast scan with nmap:</p>
+                    <pre style="width:100%"><code class="hljs bash">
+nmap -p- -T5 --min-rate 5000 --open -v -n -Pn -oA nmap/fast-scan 10.10.10.187
+                    </code></pre>
+                    <img src="/img/htb/admirer/fast-scan.png">
+                    <p>It didn't show much services but keeping in mind that this was an easy machine, I went directly to examine the web application after running the nmap custom scripts and version checks on those ports (which results didn't provide that much info).</p>
+                </section>
+                <section id="web-enum" class="subsection">
+                    <h3><a href="#web-enum">1.2.</a> Web Enumeration</h3>
+                    <p>First of all, I checked the HTTP Headers with curl but there were no interesting headers.</p>
+                    <img src="/img/htb/admirer/web-browse.png">
+                    <p>Taking a quick look at the <b>robots.txt</b> file it shown a juicy directory that was worth investigating:</p>
+                    <img src="/img/htb/admirer/robots-txt.png">
+                    <p>Doing some brute-force URL enumeration with gobuster using a common wordlist I found a couple of files that worth a look.</p>
+                    <pre style="width:100%"><code class="hljs bash">
+gobuster dir -u http://10.10.10.187/admin-dir -w /usr/share/seclists/Discovery/Web-Content/common.txt -s '200,301,302,307,403,500' -e
+                    </code></pre>
+                    <img src="/img/htb/admirer/gobuster-admin-dir.png">
+                    <img src="/img/htb/admirer/credentials.png">
+                    <img src="/img/htb/admirer/contacts.png">
+                </section>
+                <section id="ftp-enum" class="subsection">
+                    <h3><a href="#ftp-enum">1.3.</a> FTP Enumeration</h3>
+                    <p>Trying the gathered FTP credentials from the <b>credentials.txt</b> file (<code>ftpuser</code> : <code>%n?4Wz}R$tTF7</code>) I was able to access the FTP server.</p>
+                    <img src="/img/htb/admirer/ftp-enum.png">
+                    <p>There, I was able to retrieve a database dump and the compressed files of the web application.</p>
+                </section>
+                <section id="web-enum-2" class="subsection">
+                    <h3><a href="#web-enum-2">1.4.</a> Web Enumeration (2)</h3>
+                    <p>Browsing through the web application files, it had a directory called <b>utility-scripts</b> which contained some admin utilities that might worth poke a little bit.</p>
+                    <img src="/img/htb/admirer/web-code-admin-tasks.png">
+                    <p>However, after taking a look at the <b>index.php</b>, I realized that the file contained a syntax error (the database password contains double quotes, breaking its own string format):</p>
+                    <img src="/img/htb/admirer/syntax-error.png">
+                    <p>As the web application is currently up and running, that might indicate that the found files were actually a backup of the web application.</p>
+                    <p>Going back to the utility scripts, I decided to enumerate further on that directory. This took quite some time but after using some big wordlists I was able to find an interesting route.</p>
+                    <pre style="width:100%"><code class="hljs bash">
+wfuzz -c -w /usr/share/wordlists/dirb/big.txt --hc=403,404 -u "http://10.10.10.187/utility-scripts/FUZZ.php" -t 100
+                    </code></pre>
+                    <img src="/img/htb/admirer/wfuzz.png">
+                    <p>This new finding was the <a href="https://www.adminer.org/">Adminer</a> application, a database management application written in a single PHP file.</p>
+                    <img src="/img/htb/admirer/adminer-login.png">
+                    <p>My first guess here was to use the database credentials from the downloaded <b>index.php</b> but without success.</p>
+                </section>
+            </section>
+            <section id="machine-access" class="container">
+                <h2><a href="#machine-access">2.</a> Machine Access</h2>
+                <section id="lfi-vuln" class="subsection">
+                    <h3><a href="#lfi-vuln">2.1</a> LFI vulnerability</h3>
+                    <p>Doing a little bit of research about the application and its version (as it was shown in its login page), </p>
+                    <h5>VULNERABILITY SOURCES???</h5>
+                </section>
+                <section id="setup-machine" class="subsection">
+                    <h3><a href="#setup-machine">2.2</a> Setup local machine</h3>
+                    <p>Checking the port where MariaDB was running, I could see that the port was binded only to localhost. Therefore it would reject any connection from the outside.</p>
+                    <img src="/img/htb/admirer/check-mariadb-1.png">
+                    <pre style="width:100%"><code class="hljs bash">
+sudo lsof -i:3306
+sudo vim /etc/mysql/mariadb.conf.d/50-server.cnf
+sudo systemctl restart mysql
+sudo lsof -i:3306
+                    </code></pre>
+                    <p>In order to fix that, it is only necessary to replace the bind-adress of the server in its configuration file from <b>127.0.0.1</b> to <b>0.0.0.0</b>.</p>
+                    <img src="/img/htb/admirer/mariadb-config.png">
+                    <p>After restarting the server and checking again, it was ready to accept connections from other machines:</p>
+                    <img src="/img/htb/admirer/check-mariadb-2.png">
+                    <p>Then I created a random password and logged into my MariaDB server in order to create a user and database to connect to, assigning the proper permissions.</p>
+                    <pre style="width:100%"><code class="hljs bash">
+pwgen 20 -1
+sudo mysql -u root
+                    </code></pre>
+                    <pre style="width:100%"><code class="hljs sql">
+CREATE DATABASE admirertest;
+CREATE USER 'kali'@'%' IDENTIFIED BY "thiethae9xiP6ahthieg";
+GRANT ALL PRIVILEGES ON *.* TO 'kali'@'%';
+FLUSH PRIVILEGES;
+                    </code></pre>
+                    <img src="/img/htb/admirer/db-setup.png">
+                    <p>Once the database was created, everything was set to exploit the vulnerability.</p>
+                </section>
+                <section id="lfi-exploit" class="subsection">
+                    <h3><a href="#lfi-exploit">2.3</a> Exploit LFI</h3>
+                    <p>Using the newly created database credentials I was able to connect to my database from the Adminer application.</p>
+                    <img src="/img/htb/admirer/access-adminer.png">
+                    <p>Knowing that the <b>index.php</b> file from the backup had the database credentials, I decided to load that file by taking advantage of the LFI vulnerability.</p>
+                    <p>In order to exploit the vulnerability, first I had to create a database that I named <b>test</b>. Then, by sending the following SQL commands, each row of the indicated file was loaded in the database table:</p>
+                    <pre style="width:100%"><code class="hljs sql">
+LOAD DATA LOCAL INFILE '/var/www/html/index.php'
+INTO TABLE test
+FIELDS TERMINATED BY "\n"
+                    </code></pre>
+                    <img src="/img/htb/admirer/load-index-sql.png">
+                    <p>After submitting the code, each row of the indicated file was loaded as a row of the created database table. This shown the current database credentials that the web application was using:</p>
+                    <img src="/img/htb/admirer/loaded-index-file.png">
+                    <p>Testing the found username (<b>waldo</b>) and password (<b>&amp;&lt;h5b~yK3F#{PaPB&amp;dA}{H&gt;</b>) on SSH I was able to log into the server as waldo!</p>
+                   <img src="/img/htb/admirer/ssh-user.png">
+                </section>
+            </section>
+            <section id="privesc" class="container">
+                <h2><a href="#privesc">3.</a> Privilege Escalation</h2>
+                <section id="user-privs" class="subsection">
+                    <h3><a href="#user-privs">3.1.</a> Enumerate user privileges</h3>
+                    <img src="/img/htb/admirer/sudo-user.png">
+                    <img src="/img/htb/admirer/backup-web.png">
+                    <img src="/img/htb/admirer/backup-script.png">
+                </section>
+                <section id="exploit-path" class="subsection">
+                    <h3><a href="#exploit-path">3.2.</a> Exploit Python path</h3>
+
+                    <img src="/img/htb/admirer/reverse-shell-script.png">
+                    <img src="/img/htb/admirer/reverse-shell-root.png">
+                </section>
+            </section>
+        </main>
+        <footer>
+            <a href="mailto:mtnalonso@pm.me"><i class="nes-icon gmail is-small"></i></a>
+            <a href="https://github.com/mtnalonso"><i class="nes-icon github is-small"></i></a>
+            <a href="https://twitter.com/mtnalonso"><i class="nes-icon twitter is-small"></i></a>
+            <a href="https://www.linkedin.com/in/MartinAlonsoVilar"><i class="nes-icon linkedin is-small"></i></a>
+            <b>Style: <a href="https://nostalgic-css.github.io/NES.css/">NES.css</a></b>
+        </footer>
+    </body>
+</html>

@@ -13,6 +13,7 @@
         {"src": "/security/web/lfi", "dest": "/src/security/web/lfi.html"},
         {"src": "/security/web/url-fuzzing", "dest": "/src/security/web/url_fuzzing.html"},
         {"src": "/write-ups/hackthebox/monteverde", "dest": "/src/write_ups/htb/monteverde.html"},
+        {"src": "/write-ups/hackthebox/admirer", "dest": "/src/write_ups/htb/admirer.html"},
         {"src": "/blog/2020/07/23-hello-friend", "dest": "/src/blog/2020/07/23-hello-friend.html"}
     ]
 }
