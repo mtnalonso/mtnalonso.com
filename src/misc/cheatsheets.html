@@ -63,6 +63,51 @@ nmap -p- -T5 --min-rate 5000 -n -v &lt;target-ip-address&gt;
                         </code></pre>
                     </section>
                 </section>
+                <section class="exp-container">
+                    <section class="nes-container with-title">
+                        <h5 class="title">git</h5>
+                        <button class="nes-btn is-primary btn-expand-container" onclick="expandContainer(this)">+</button>
+                    </section>
+                    <section class="exp-container-code" style="display: none;">
+                        <pre><code class="hljs bash">
+## Branches
+# Delete local branch
+git branch -d &lt;branch-name&gt;
+# Delete remote branch
+git push origin --delete &lt;branch-name&gt;
+
+
+## Tags
+# List tags
+git log --simplify-by-decoration --decorate --pretty=oneline | fgrep 'tag: '
+# Add tag to a specific commit
+git tag &lt;tagname&gt; &lt;commit-id&gt;
+# Push tag to remote
+git push origin &lt;tagname&gt;
+# Push all tags to remote
+git push --tags
+# Remove the tag from local environment
+git tag -d &lt;tagname&gt;
+# Remote the tag from remote environment
+git push origin :refs/tags/&lt;tagname&gt;
+
+
+## Git flow
+git flow (feature|release|hotfix) start &lt;name&gt; 
+git flow (feature|release|hotfix) finish [-F] &lt;name&gt;
+git push origin &lt;tag-name&gt; # (for releases and hotfixes)
+
+
+## Commits info
+# Show commits by users
+git shortlog -s -n —all —no-merges
+# Get date of commits for an user
+git log --all --no-merges --author=<username> --format=%cd
+# Git first commit of repo
+git rev-list --max-parents=0 HEAD
+                        </code></pre>
+                    </section>
+                </section>
             </section>
             <section id="linux" class="nes-container with-title border-red">
                 <h2 class="title">Linux</h2>
