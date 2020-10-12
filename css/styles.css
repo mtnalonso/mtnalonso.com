@@ -97,6 +97,10 @@ footer.fixed {
     width: 18em;
 }
 
+.nes-badge.badge-huge {
+    width: 27em;
+}
+
 .plain-link {
     text-decoration: none !important;
     color: black;
